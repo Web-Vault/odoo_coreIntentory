@@ -1,0 +1,52 @@
+{
+  "stats": [
+    { "id": "s1", "label": "Ingredients", "value": 48, "trend": "↑ 4 new", "trendType": "up" },
+    { "id": "s2", "label": "Low Stock", "value": 6, "trend": "↓ needs reorder", "trendType": "down" },
+    { "id": "s3", "label": "Stock Value", "value": "₹2.4L", "trend": "↑ 12%", "trendType": "up" },
+    { "id": "s4", "label": "AI Saved", "value": "₹28.6K", "trend": "Waste prevented", "trendType": "neutral" }
+  ],
+  "operations": [
+    { "id": "oc1", "label": "Receipts", "value": 8, "sub": "Validate incoming stock", "badge": "8 ready", "badgeColor": "amber" },
+    { "id": "oc2", "label": "Deliveries", "value": 5, "sub": "Outgoing transfers", "badge": "5 to ship", "badgeColor": "sky" },
+    { "id": "oc3", "label": "Transfers", "value": 3, "sub": "Branch to branch", "badge": "3 pending", "badgeColor": "berry" },
+    { "id": "oc4", "label": "Quality Checks", "value": 12, "sub": "FSSAI compliance", "badge": "All clear", "badgeColor": "matcha" },
+    { "id": "oc5", "label": "Replenishments", "value": 6, "sub": "Auto & manual orders", "badge": "AI Active", "badgeColor": "amber" },
+    { "id": "oc6", "label": "Waste Alerts", "value": 4, "sub": "Expiring items", "badge": "Urgent", "badgeColor": "red" }
+  ],
+  "recentOperations": [
+    { "ref": "WH/IN/00041", "type": "Receipt", "typeColor": "sky", "from": "BeanSource", "to": "Mumbai", "item": "Arabica Beans", "qty": "15 kg", "status": "Done", "statusColor": "green", "date": "Today 09:14" },
+    { "ref": "WH/OUT/00088", "type": "Delivery", "typeColor": "amber", "from": "Pune", "to": "POS", "item": "Oat Milk", "qty": "2 L", "status": "Done", "statusColor": "green", "date": "Today 08:45" },
+    { "ref": "WH/INT/00019", "type": "Transfer", "typeColor": "berry", "from": "Delhi", "to": "Pune", "item": "Vanilla Syrup", "qty": "3 btl", "status": "In Progress", "statusColor": "amber", "date": "Today 08:20" },
+    { "ref": "WH/IN/00040", "type": "Receipt", "typeColor": "sky", "from": "DairyFresh", "to": "Pune", "item": "Oat Milk", "qty": "40 L", "status": "Done", "statusColor": "green", "date": "Jan 12" },
+    { "ref": "WH/ADJ/00007", "type": "Adjustment", "typeColor": "caramel", "from": "—", "to": "Mumbai", "item": "Croissants", "qty": "+24 pcs", "status": "To Do", "statusColor": "sky", "date": "Jan 11" }
+  ],
+  "products": [
+    { "sku": "CB-001", "name": "Arabica Coffee Beans", "category": "Coffee", "categoryColor": "amber", "branch": "Mumbai", "onHand": 2.1, "unit": "kg", "forecast": -2.9, "rule": "Min-Max", "price": "₹850/kg", "status": "Critical", "statusColor": "red", "progress": 8 },
+    { "sku": "ML-002", "name": "Whole Milk", "category": "Dairy", "categoryColor": "sky", "branch": "Pune", "onHand": 32, "unit": "L", "forecast": 18, "rule": "Min-Max", "price": "₹65/L", "status": "OK", "statusColor": "green", "progress": 64 },
+    { "sku": "ML-003", "name": "Oat Milk", "category": "Dairy Alt", "categoryColor": "sky", "branch": "Pune", "onHand": 4, "unit": "L", "forecast": 16, "rule": "MTO", "price": "₹160/L", "status": "Low", "statusColor": "amber", "progress": 20 },
+    { "sku": "SY-001", "name": "Vanilla Syrup", "category": "Syrups", "categoryColor": "berry", "branch": "Delhi", "onHand": 1, "unit": "btl", "forecast": -2, "rule": "Urgent", "price": "₹420/btl", "status": "Critical", "statusColor": "red", "progress": 10 },
+    { "sku": "BK-001", "name": "Croissants", "category": "Bakery", "categoryColor": "caramel", "branch": "Mumbai", "onHand": 6, "unit": "pcs", "forecast": 34, "rule": "MTO", "price": "₹60/pc", "status": "Low", "statusColor": "amber", "progress": 30 },
+    { "sku": "CB-002", "name": "Robusta Beans", "category": "Coffee", "categoryColor": "amber", "branch": "Delhi", "onHand": 18, "unit": "kg", "forecast": 12, "rule": "Min-Max", "price": "₹620/kg", "status": "OK", "statusColor": "green", "progress": 80 }
+  ],
+  "forecast": [
+    { "day": "Mon", "value": 28, "color": "cream", "border": "latte", "desc": "Forecast: 8kg Arabica, 12L Milk" },
+    { "day": "Tue", "value": 40, "color": "latte", "desc": "Forecast: 11kg Arabica, 18L Milk" },
+    { "day": "Wed", "value": 34, "color": "latte", "desc": "Forecast: 9kg Arabica, 14L Milk" },
+    { "day": "Thu", "value": 46, "color": "caramel", "desc": "High: 14kg Arabica, 22L Milk" },
+    { "day": "Fri", "value": 54, "color": "mocha", "desc": "Very high: 18kg Arabica, 30L Milk" },
+    { "day": "Sat", "value": 60, "color": "roast", "desc": "Peak: 20kg Arabica, 35L Milk — order now!" },
+    { "day": "Sun", "value": 56, "color": "roast", "desc": "Peak: 19kg Arabica, 32L Milk" }
+  ],
+  "branches": [
+    { "name": "Mumbai — Bandra", "loc": "Linking Rd, Bandra West", "status": "Open", "statusColor": "green", "capacity": "800 kg", "items": 18, "value": "₹92,400", "score": "8.4 / 10", "util": 42, "utilDesc": "336 / 800 kg · AI: Excellent efficiency" },
+    { "name": "Pune — Koregaon", "loc": "Koregaon Park, Pune", "status": "Open", "statusColor": "green", "capacity": "600 kg", "items": 15, "value": "₹76,200", "score": "7.9 / 10", "util": 67, "utilDesc": "402 / 600 kg · AI: Good" },
+    { "name": "Delhi — Connaught", "loc": "Connaught Place, Delhi", "status": "Near Full", "statusColor": "red", "capacity": "700 kg", "items": 15, "value": "₹68,500", "score": "6.2 / 10", "util": 88, "utilDesc": "616 / 700 kg · AI Alert: Near capacity!" }
+  ],
+  "aiReplies": {
+    "How much Arabica do we have across all branches?": "Arabica Coffee Beans across branches — Mumbai: 2.1 kg (critical, auto-order PO-1042 triggered for 15 kg, arriving Friday), Delhi: 18 kg (healthy), Pune: 8.4 kg (adequate). Total on hand: 28.5 kg. Weekend forecast demand: 52 kg. Recommend approving Mumbai order immediately.",
+    "What will run out this weekend?": "High-risk items this weekend: (1) Oat Milk at Pune — 4L on hand, 12L forecast demand. (2) Vanilla Syrup at Delhi — 1 bottle, need 3. (3) Croissants at Mumbai — 6 pcs, forecast 40+ sold Saturday. All three have replenishment suggestions ready to approve in one click.",
+    "Which branch has the highest waste risk?": "Delhi — Connaught has the highest waste risk score (6.2/10). Issues: Fresh Cream showing abnormal consumption, Hazelnut Syrup -12% unexplained variance (possible theft), branch at 88% capacity. Recommend temperature audit + transfer 3 slow-moving items to Pune.",
+    "Show me replenishment suggestions": "Active queue: Arabica Beans 15kg Mumbai ₹12,750 (urgent), Oat Milk 20L Pune ₹3,200 (today), Vanilla Syrup 6btl Delhi ₹2,520 (3-day lead), Croissants 40pcs Mumbai ₹2,400. Total: ₹20,870. AI confidence: 91%. Use \"Order All\" in Replenishment to approve in one click.",
+    "What is total stock value today?": "Total inventory value: ₹2,37,600 across all 3 branches. Mumbai: ₹92,400 (39%), Pune: ₹76,200 (32%), Delhi: ₹68,500 (29%). Up ₹24,800 (+12%) from last week, driven by Arabica restock. Top category: Coffee Beans at ₹82,400."
+  }
+}
