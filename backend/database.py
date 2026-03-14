@@ -8,7 +8,8 @@ load_dotenv()
 
 # MySQL Connection Details
 MYSQL_USER = os.getenv("MYSQL_USER", "root")
-MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD", "password")
+# Ensure MYSQL_PASSWORD is an empty string if it's not provided or is just an empty line
+MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD", "")
 MYSQL_HOST = os.getenv("MYSQL_HOST", "localhost")
 MYSQL_PORT = os.getenv("MYSQL_PORT", "3306")
 MYSQL_DB = os.getenv("MYSQL_DB", "inventory_db")
@@ -20,7 +21,9 @@ if USE_SQLITE:
     SQLALCHEMY_DATABASE_URL = "sqlite:///./inventory.db"
     engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
 else:
-    SQLALCHEMY_DATABASE_URL = f"mysql+mysqlconnector://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}:{MYSQL_PORT}/{MYSQL_DB}"
+    # Handle empty password correctly in the connection string
+    password_part = f":{MYSQL_PASSWORD}" if MYSQL_PASSWORD else ""
+    SQLALCHEMY_DATABASE_URL = f"mysql+mysqlconnector://{MYSQL_USER}{password_part}@{MYSQL_HOST}:{MYSQL_PORT}/{MYSQL_DB}"
     try:
         engine = create_engine(SQLALCHEMY_DATABASE_URL)
         # Test connection
@@ -28,8 +31,15 @@ else:
             pass
     except Exception as e:
         print(f"MySQL connection failed: {e}. Falling back to SQLite...")
-        SQLALCHEMY_DATABASE_URL = "sqlite:///./inventory.db"
-        engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
+        # Try without password explicitly for blank password scenarios
+        try:
+            SQLALCHEMY_DATABASE_URL_NOPASS = f"mysql+mysqlconnector://{MYSQL_USER}@{MYSQL_HOST}:{MYSQL_PORT}/{MYSQL_DB}"
+            engine = create_engine(SQLALCHEMY_DATABASE_URL_NOPASS)
+            with engine.connect() as conn:
+                print("Connected to MySQL with blank password.")
+        except:
+            SQLALCHEMY_DATABASE_URL = "sqlite:///./inventory.db"
+            engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 

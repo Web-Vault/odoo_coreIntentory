@@ -38,11 +38,31 @@ const Register = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (validate()) {
-      // For hackathon, just navigate to login
-      navigate("/login");
+      try {
+        const response = await fetch('http://localhost:8000/api/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: form.name,
+            email: form.email,
+            password: form.password,
+            role: "Manager"
+          })
+        });
+        
+        if (response.ok) {
+          navigate("/login");
+        } else {
+          const error = await response.json();
+          setErrors({ auth: error.detail || "Registration failed. Try again." });
+        }
+      } catch (error) {
+        console.error('Registration error:', error);
+        setErrors({ auth: "Connection error. Is the backend running?" });
+      }
     }
   };
 

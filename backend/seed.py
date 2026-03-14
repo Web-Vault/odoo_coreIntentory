@@ -22,6 +22,8 @@ def seed_db():
         db.query(models.Product).delete()
         db.query(models.Forecast).delete()
         db.query(models.Branch).delete()
+        db.query(models.AIReply).delete()
+        db.query(models.User).delete()
         
         # Seed Stats
         for s in data["stats"]:
@@ -61,7 +63,30 @@ def seed_db():
             db.add(db_ro)
             
         # Seed Products
-        for p in data["products"]:
+        rich_products = [
+            # Mumbai Branch
+            {"sku": "CB-001", "name": "Arabica Coffee Beans", "category": "Coffee", "categoryColor": "amber", "branch": "Mumbai", "onHand": 2.1, "unit": "kg", "forecast": -2.9, "rule": "Min-Max", "price": "₹850/kg", "status": "Critical", "statusColor": "red", "progress": 8},
+            {"sku": "CB-002", "name": "Robusta Coffee Beans", "category": "Coffee", "categoryColor": "amber", "branch": "Mumbai", "onHand": 15.0, "unit": "kg", "forecast": 5.0, "rule": "Min-Max", "price": "₹650/kg", "status": "OK", "statusColor": "green", "progress": 75},
+            {"sku": "ML-001", "name": "Whole Milk", "category": "Dairy", "categoryColor": "sky", "branch": "Mumbai", "onHand": 45.0, "unit": "L", "forecast": 12.0, "rule": "Min-Max", "price": "₹65/L", "status": "OK", "statusColor": "green", "progress": 85},
+            {"sku": "SY-001", "name": "Vanilla Syrup", "category": "Syrups", "categoryColor": "berry", "branch": "Mumbai", "onHand": 1.0, "unit": "btl", "forecast": -2.0, "rule": "Urgent", "price": "₹420/btl", "status": "Critical", "statusColor": "red", "progress": 10},
+            {"sku": "CR-001", "name": "Butter Croissants", "category": "Bakery", "categoryColor": "caramel", "branch": "Mumbai", "onHand": 6.0, "unit": "pcs", "forecast": -34.0, "rule": "Daily", "price": "₹120/pc", "status": "Critical", "statusColor": "red", "progress": 15},
+            
+            # Pune Branch
+            {"sku": "ML-002", "name": "Whole Milk", "category": "Dairy", "categoryColor": "sky", "branch": "Pune", "onHand": 32.0, "unit": "L", "forecast": 18.0, "rule": "Min-Max", "price": "₹65/L", "status": "OK", "statusColor": "green", "progress": 64},
+            {"sku": "ML-003", "name": "Oat Milk", "category": "Dairy Alt", "categoryColor": "sky", "branch": "Pune", "onHand": 4.0, "unit": "L", "forecast": 16.0, "rule": "MTO", "price": "₹160/L", "status": "Low", "statusColor": "amber", "progress": 20},
+            {"sku": "CB-003", "name": "Espresso Roast", "category": "Coffee", "categoryColor": "amber", "branch": "Pune", "onHand": 8.4, "unit": "kg", "forecast": -1.5, "rule": "Min-Max", "price": "₹920/kg", "status": "Low", "statusColor": "amber", "progress": 35},
+            {"sku": "SY-002", "name": "Caramel Syrup", "category": "Syrups", "categoryColor": "berry", "branch": "Pune", "onHand": 12.0, "unit": "btl", "forecast": 4.0, "rule": "Min-Max", "price": "₹450/btl", "status": "OK", "statusColor": "green", "progress": 90},
+            {"sku": "BK-001", "name": "Chocolate Muffins", "category": "Bakery", "categoryColor": "caramel", "branch": "Pune", "onHand": 2.0, "unit": "pcs", "forecast": -10.0, "rule": "Daily", "price": "₹95/pc", "status": "Expiring", "statusColor": "red", "progress": 5},
+            
+            # Delhi Branch
+            {"sku": "CB-004", "name": "Cold Brew Blend", "category": "Coffee", "categoryColor": "amber", "branch": "Delhi", "onHand": 18.0, "unit": "kg", "forecast": 10.0, "rule": "Min-Max", "price": "₹880/kg", "status": "OK", "statusColor": "green", "progress": 80},
+            {"sku": "ML-004", "name": "Almond Milk", "category": "Dairy Alt", "categoryColor": "sky", "branch": "Delhi", "onHand": 3.0, "unit": "L", "forecast": 15.0, "rule": "MTO", "price": "₹180/L", "status": "Low", "statusColor": "amber", "progress": 15},
+            {"sku": "SY-003", "name": "Hazelnut Syrup", "category": "Syrups", "categoryColor": "berry", "branch": "Delhi", "onHand": 0.5, "unit": "btl", "forecast": -4.5, "rule": "Urgent", "price": "₹420/btl", "status": "Critical", "statusColor": "red", "progress": 5},
+            {"sku": "ML-005", "name": "Fresh Cream", "category": "Dairy", "categoryColor": "sky", "branch": "Delhi", "onHand": 2.0, "unit": "L", "forecast": -8.0, "rule": "Urgent", "price": "₹210/L", "status": "Critical", "statusColor": "red", "progress": 10},
+            {"sku": "TP-001", "name": "Paper Cups 8oz", "category": "Packaging", "categoryColor": "mocha", "branch": "Delhi", "onHand": 1200.0, "unit": "pcs", "forecast": 500.0, "rule": "Bulk", "price": "₹4/pc", "status": "OK", "statusColor": "green", "progress": 95}
+        ]
+        
+        for p in rich_products:
             db_p = models.Product(
                 sku=p["sku"],
                 name=p["name"],
@@ -105,6 +130,23 @@ def seed_db():
                 util_desc=b["utilDesc"]
             )
             db.add(db_b)
+            
+        # Seed AI Replies
+        for q, r in data["aiReplies"].items():
+            db_reply = models.AIReply(
+                question=q,
+                reply=r
+            )
+            db.add(db_reply)
+            
+        # Seed Default User
+        db_user = models.User(
+            email="admin@brewiq.com",
+            password="password123",
+            name="BrewIQ Admin",
+            role="System Manager"
+        )
+        db.add(db_user)
             
         db.commit()
         print("Database seeded successfully!")

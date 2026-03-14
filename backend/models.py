@@ -71,3 +71,17 @@ class Branch(Base):
     score = Column(String(50))
     util = Column(Integer)
     util_desc = Column(String(255))
+
+class AIReply(Base):
+    __tablename__ = "ai_replies"
+    id = Column(Integer, primary_key=True, index=True)
+    question = Column(String(255), unique=True)
+    reply = Column(Text)
+
+class User(Base):
+    __tablename__ = "users"
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String(255), unique=True, index=True)
+    password = Column(String(255))
+    name = Column(String(255))
+    role = Column(String(50), default="Manager")

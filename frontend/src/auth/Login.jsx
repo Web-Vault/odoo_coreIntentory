@@ -22,19 +22,30 @@ const Login = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (validate()) {
-      // Static ID and Password for Hackathon
-      const STATIC_EMAIL = "admin@brewiq.com";
-      const STATIC_PASSWORD = "password123";
-
-      if (email === STATIC_EMAIL && password === STATIC_PASSWORD) {
-        navigate("/dashboard");
-      } else {
-        setErrors({
-          auth: "Invalid email or password. Hint: admin@brewiq.com / password123"
+      try {
+        const response = await fetch('http://localhost:8000/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
         });
+        
+        if (response.ok) {
+          const user = await response.json();
+          // Save user info to localStorage if needed
+          localStorage.setItem('user', JSON.stringify(user));
+          navigate("/dashboard");
+        } else {
+          const error = await response.json();
+          setErrors({
+            auth: error.detail || "Invalid email or password. Hint: admin@brewiq.com / password123"
+          });
+        }
+      } catch (error) {
+        console.error('Login error:', error);
+        setErrors({ auth: "Connection error. Is the backend running?" });
       }
     }
   };

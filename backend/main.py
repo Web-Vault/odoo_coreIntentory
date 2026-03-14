@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from .database import get_db, engine, Base
 from . import models, schemas
@@ -31,23 +31,9 @@ def get_dashboard_data(db: Session = Depends(get_db)):
     products = db.query(models.Product).all()
     forecasts = db.query(models.Forecast).all()
     branches = db.query(models.Branch).all()
+    ai_replies = db.query(models.AIReply).all()
 
-    # Mapping RecentOperation's from_loc and to_loc to from and to
-    formatted_recent_ops = []
-    for ro in recent_ops:
-        formatted_recent_ops.append({
-            "ref": ro.ref,
-            "type": ro.type,
-            "typeColor": ro.type_color,
-            "from": ro.from_loc,
-            "to": ro.to_loc,
-            "item": ro.item,
-            "qty": ro.qty,
-            "status": ro.status,
-            "statusColor": ro.status_color,
-            "date": ro.date
-        })
-
+    # Mapping for Frontend consistency (camelCase)
     return {
         "stats": [
             {
@@ -68,8 +54,37 @@ def get_dashboard_data(db: Session = Depends(get_db)):
                 "badgeColor": o.badge_color
             } for o in operations
         ],
-        "recentOperations": formatted_recent_ops,
-        "products": products,
+        "recentOperations": [
+            {
+                "ref": ro.ref,
+                "type": ro.type,
+                "typeColor": ro.type_color,
+                "from": ro.from_loc,
+                "to": ro.to_loc,
+                "item": ro.item,
+                "qty": ro.qty,
+                "status": ro.status,
+                "statusColor": ro.status_color,
+                "date": ro.date
+            } for ro in recent_ops
+        ],
+        "products": [
+            {
+                "sku": p.sku,
+                "name": p.name,
+                "category": p.category,
+                "categoryColor": p.category_color,
+                "branch": p.branch,
+                "onHand": p.on_hand,
+                "unit": p.unit,
+                "forecast": p.forecast,
+                "rule": p.rule,
+                "price": p.price,
+                "status": p.status,
+                "statusColor": p.status_color,
+                "progress": p.progress
+            } for p in products
+        ],
         "forecast": [
             {
                 "day": f.day,
@@ -92,12 +107,41 @@ def get_dashboard_data(db: Session = Depends(get_db)):
                 "util": b.util,
                 "utilDesc": b.util_desc
             } for b in branches
-        ]
+        ],
+        "aiReplies": ai_replies
     }
+
+@app.post("/api/operations", response_model=schemas.RecentOperationSchema)
+def create_operation(operation: schemas.RecentOperationCreate, db: Session = Depends(get_db)):
+    db_op = models.RecentOperation(**operation.dict())
+    db.add(db_op)
+    db.commit()
+    db.refresh(db_op)
+    return db_op
+
+@app.post("/api/login", response_model=schemas.UserSchema)
+def login(user_login: schemas.UserLogin, db: Session = Depends(get_db)):
+    user = db.query(models.User).filter(models.User.email == user_login.email).first()
+    if not user or user.password != user_login.password:
+        raise HTTPException(status_code=401, detail="Invalid email or password")
+    return user
+
+@app.post("/api/register", response_model=schemas.UserSchema)
+def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
+    # Check if user already exists
+    existing_user = db.query(models.User).filter(models.User.email == user.email).first()
+    if existing_user:
+        raise HTTPException(status_code=400, detail="Email already registered")
+        
+    db_user = models.User(**user.dict())
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
 
 @app.get("/health")
 def health_check():
-    return {"status": "healthy", "database": "connected"} # Placeholder for actual DB health check
+    return {"status": "healthy", "database": "connected"}
 
 if __name__ == "__main__":
     import uvicorn
